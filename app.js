@@ -6,7 +6,8 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-
+var dburl= require('./DBconfig/connection');
+var mongoose = require('mongoose');
 var app = express();
 
 // view engine setup
@@ -37,5 +38,15 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+//Connect to DAtabase using ./dbconfig/connection
+mongoose.connect(dburl);
+// Get Mongoose to use the global promise library
+mongoose.Promise = global.Promise;
+//Get the default connection
+var db = mongoose.connection;
+
+//Bind connection to error event (to get notification of connection errors)
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
 
 module.exports = app;
